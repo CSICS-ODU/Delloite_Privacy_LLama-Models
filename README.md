@@ -22,6 +22,7 @@ The **Defender Prompt** is embedded into the model's processing pipeline during 
 
 <p align="center">
   <img src="/Transformer Archetecture.png" width="400"/>
+  **Transformer Architecture Discussed in the "Attention is All You Need" Paper**
 </p>
 
 The **Llama 8B-Instruct model** is built on a **Transformer architecture** with **32 layers of decoders**. In this enhanced version, we are embedding the **Defender Prompt** into the model's processing pipeline, specifically in the **last 14 layers** (from layer 19 to layer 32). This **key modification** strengthens the model's **contextual understanding** and ensures that the **system’s prompt** remains influential throughout the entire inference process.
