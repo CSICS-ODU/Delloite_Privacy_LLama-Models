@@ -25,7 +25,7 @@ The **Defender Prompt** is embedded into the model's processing pipeline during 
 </p>
 
 <p align="center">
-   **Transformer Architecture Discussed in the "Attention is All You Need" Paper**
+   Transformer Architecture Discussed in the "Attention is All You Need" Paper
 </p>
 
 
