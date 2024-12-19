@@ -63,6 +63,5 @@ Remember that the links expire after 24 hours and a certain amount of downloads.
 ## Running the models
 
 After cloning this repository, you can execute the .ipynb file to run the open-source Llama models. The output displays the accuracy of the Defender Mechanism both before and after mitigating adversarial prompts.
-```
 
 
