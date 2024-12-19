@@ -26,11 +26,10 @@ The **Defender Prompt** is embedded into the model's processing pipeline during 
 
 The **Llama 8B-Instruct model** is built on a **Transformer architecture** with **32 layers of decoders**. In this enhanced version, we are embedding the **Defender Prompt** into the model's processing pipeline, specifically in the **last 14 layers** (from layer 19 to layer 32). This **key modification** strengthens the model's **contextual understanding** and ensures that the **system’s prompt** remains influential throughout the entire inference process.
 
-# **Enhanced Layer Processing:**
-By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**.
+
 
 # **Privacy-Aligned Results:**
-This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
+By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**. This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
 
 <p align="center">
   <img src="/Image.png" width="400"/>
