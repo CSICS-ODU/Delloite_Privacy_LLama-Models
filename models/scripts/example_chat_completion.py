@@ -222,7 +222,7 @@ envelopes are not accepted)
 
 
 
-    for dialog in dialogs[:1]:
+    for dialog in dialogs:
         result = generator.chat_completion(
             dialog,
             max_gen_len=max_gen_len,
