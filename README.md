@@ -2,11 +2,25 @@
   <img src="/Llama_Repo.jpeg" width="400"/>
 </p>
 
+# Privacy-preserving techniques in Large Language Models (LLMs)
+This repository showcases an approach to mitigate adversarial prompts in Llama models. To achieve this, the System Prompt includes specialized Defender Prompts designed to enhance privacy and security during inference.
+
+# Key Changes in the Model
+Defender Prompt Embedding:
+The Defender Prompt is embedded into the model's processing pipeline during input processing in the last half of the model's layers. This ensures that the System Prompt's context is reinforced, especially in later stages where the model might otherwise lose its influence.
+
+# Enhanced Layer Processing:
+By incorporating the Defender Prompt embedding into the latter layers, the model prioritizes privacy-preserving mechanisms while maintaining contextual relevance and accuracy.
+
+# Privacy-Aligned Results:
+This modification ensures outputs that are more aligned with privacy objectives, significantly improving the model's robustness against adversarial prompts.
+
+
 <p align="center">
   <img src="/Image.png" width="400"/>
 </p>
 
----
+
 
 # Llama Models
 
@@ -48,6 +62,7 @@ Remember that the links expire after 24 hours and a certain amount of downloads.
 
 ## Running the models
 
-After Cloning the Model you can run the 
+After cloning this repository, you can execute the .ipynb file to run the open-source Llama models. The output displays the accuracy of the Defender Mechanism both before and after mitigating adversarial prompts.
 ```
+
 
