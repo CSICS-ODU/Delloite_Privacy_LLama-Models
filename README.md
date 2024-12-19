@@ -3,18 +3,34 @@
 </p>
 
 # Privacy-preserving techniques in Large Language Models (LLMs)
-This repository showcases an approach to mitigate adversarial prompts in Llama models. To achieve this, the System Prompt includes specialized Defender Prompts designed to enhance privacy and security during inference.
 
-# Key Changes in the Model
-Defender Prompt Embedding:
-The Defender Prompt is embedded into the model's processing pipeline during input processing in the last half of the model's layers. This ensures that the System Prompt's context is reinforced, especially in later stages where the model might otherwise lose its influence.
+This repository showcases an approach to mitigate **adversarial prompts** in **Llama models**. The **System Prompt** includes specialized **Defender Prompts** designed to enhance **privacy** and **security** during inference to achieve this. 
 
-# Enhanced Layer Processing:
-By incorporating the Defender Prompt embedding into the latter layers, the model prioritizes privacy-preserving mechanisms while maintaining contextual relevance and accuracy.
+The repository includes a file named `dataset.py`, which contains over **100 synthetically generated comments** designed to replicate **Reddit posts and comments**. These comments are generated to mirror **real-world data**, enabling the testing of models in a simulated environment.
 
-# Privacy-Aligned Results:
-This modification ensures outputs that are more aligned with privacy objectives, significantly improving the model's robustness against adversarial prompts.
+However, a key concern arises from the use of **Adversarial Prompts**. **Open-source models**, when exposed to such prompts, have the potential to infer sensitive personal attributes of users, including but not limited to **location**, **race**, and other **private information**. The adversarial nature of these prompts can lead to unintended inferences about the users' personal characteristics, posing **privacy risks**.
 
+This issue underscores the importance of carefully controlling the types of **inputs** that are fed into open-source models, particularly in environments where **user data** might be inferred from seemingly innocuous comments.
+
+You can read more about the **Privacy Inference attacks** with a link to this paper: [Beyond the Horizon](https://files.sri.inf.ethz.ch/website/papers/staab2023beyond.pdf).
+
+
+# **Key Changes in the Model**
+
+### **Defender Prompt Embedding:**
+The **Defender Prompt** is embedded into the model's processing pipeline during input processing in the last half of the model's layers. This ensures that the **System Prompt's** context is reinforced, especially in later stages where the model might otherwise lose its influence.
+
+<p align="center">
+  <img src="/Transformer Archetecture.png" width="400"/>
+</p>
+
+The **Llama 8B-Instruct model** is built on a **Transformer architecture** with **32 layers of decoders**. In this enhanced version, we are embedding the **Defender Prompt** into the model's processing pipeline, specifically in the **last 14 layers** (from layer 19 to layer 32). This **key modification** strengthens the model's **contextual understanding** and ensures that the **system’s prompt** remains influential throughout the entire inference process.
+
+# **Enhanced Layer Processing:**
+By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**.
+
+# **Privacy-Aligned Results:**
+This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
 
 <p align="center">
   <img src="/Image.png" width="400"/>
@@ -63,5 +79,7 @@ Remember that the links expire after 24 hours and a certain amount of downloads.
 ## Running the models
 
 After cloning this repository, you can execute the .ipynb file to run the open-source Llama models. The output displays the accuracy of the Defender Mechanism both before and after mitigating adversarial prompts.
+
+
 
 
