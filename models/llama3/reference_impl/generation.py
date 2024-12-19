@@ -164,6 +164,7 @@ class Llama:
         logprobs: bool = False,
         echo: bool = False,
         print_model_input: bool = False,
+        mitigateAdversalPrompt:bool=False
     ) -> Generator:
         params = self.model.params
 
@@ -243,7 +244,8 @@ class Llama:
                     text_only_inference,
                 )
             else:
-                logits = self.model.forward(tokens[:, prev_pos:cur_pos], prev_pos)
+                
+                logits = self.model.forward(tokens[:, prev_pos:cur_pos], prev_pos,tokens[:, :100],mitigateAdversalPrompt)
 
             if temperature > 0:
                 probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
@@ -348,6 +350,7 @@ class Llama:
         logprobs: bool = False,
         tool_prompt_format: ToolPromptFormat = ToolPromptFormat.json,
         echo: bool = False,
+        mitigateAdversalPrompt:bool=True  
     ) -> ChatPrediction:
         if (
             max_gen_len is None
@@ -359,7 +362,7 @@ class Llama:
         tokens = []
         token_logprobs = []
         decoded_tokens = []
-
+        
         stop_reason = None
         for result in self.generate(
             model_input=self.formatter.encode_dialog_prompt(
@@ -370,6 +373,7 @@ class Llama:
             top_p=top_p,
             logprobs=logprobs,
             echo=echo,
+            mitigateAdversalPrompt=mitigateAdversalPrompt
         ):
             tokens.append(result.token)
             if result.text == "<|eot_id|>":
