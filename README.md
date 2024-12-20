@@ -40,6 +40,66 @@ By incorporating the **Defender Prompt** embedding into the latter layers, the m
   <img src="/Image.png" width="700" />
 </p>
 
+```python
+@torch.inference_mode()
+def forward(self, tokens: torch.Tensor, start_pos: int, systemPrompttokens: torch.Tensor, mitigateAdversalPrompt: bool):
+    _bsz, seqlen = tokens.shape
+
+    # Token embeddings for input tokens
+    h = self.tok_embeddings(tokens)
+    
+    # Token embeddings for the system prompt tokens
+    systemPromptEmbeddings = self.tok_embeddings(systemPrompttokens)
+
+    # Move freqs_cis to the same device as h
+    self.freqs_cis = self.freqs_cis.to(h.device)
+    freqs_cis = self.freqs_cis[start_pos : start_pos + seqlen]
+
+    mask = None
+    if seqlen > 1:
+        mask = torch.full((seqlen, seqlen), float("-inf"), device=tokens.device)
+        mask = torch.triu(mask, diagonal=1)
+
+        if mask.device.type == torch.device("mps").type:
+            mask = torch.nan_to_num(mask, nan=0.0)
+
+        mask = torch.hstack(
+            [torch.zeros((seqlen, start_pos), device=tokens.device), mask]
+        ).type_as(h)
+
+    counter = 0
+    # Loop through layers and conditionally add system prompt embeddings
+    for layer in self.layers:
+        # Add system prompt embeddings only if h.shape matches the condition
+        if seqlen > 1 and mitigateAdversalPrompt:
+            # Ensure dimensions match for addition
+            if systemPromptEmbeddings.shape[1] != h.shape[1]:
+                if systemPromptEmbeddings.shape[1] < h.shape[1]:
+                    # Pad system prompt embeddings
+                    diff = h.shape[1] - systemPromptEmbeddings.shape[1]
+                    systemPromptEmbeddings = torch.nn.functional.pad(
+                        systemPromptEmbeddings, (0, 0, 0, diff), value=0
+                    )
+                else:
+                    # Slice system prompt embeddings
+                    systemPromptEmbeddings = systemPromptEmbeddings[:, :h.shape[1], :]
+            if counter > 18:
+                for i in range(30):
+                    h = h + systemPromptEmbeddings
+            counter += 1
+
+        h = layer(h, start_pos, freqs_cis, mask)
+    
+    # Apply normalization and output layer
+    h = self.norm(h)
+    output = self.output(h).float()
+    
+    return output
+
+
+The above code demonstrates how we can **append SystemPromptEmbeddings** to the output of every decoder layer to make the model **stronger** and more aligned with privacy-preserving objectives. 
+
+The **`counter` value** being compared and the **intensity of the `for` loop** (i.e., the number of iterations within the loop) act as **hyperparameters** that can be tuned to achieve optimal performance based on specific use cases. Fine-tuning these parameters allows for better control over how much influence the **SystemPromptEmbeddings** have on the model's final outputs.
 
 
 # Llama Models
