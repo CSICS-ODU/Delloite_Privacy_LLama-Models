@@ -21,7 +21,7 @@ You can read more about the **Privacy Inference attacks** with a link to this pa
 The **Defender Prompt** is embedded into the model's processing pipeline during input processing in the last half of the model's layers. This ensures that the **System Prompt's** context is reinforced, especially in later stages where the model might otherwise lose its influence.
 
 <p align="center">
-  <img src="/Transformer Archetecture.png" width="400"/>
+  <img src="/Transformer Archetecture.png" width="500" height="600">
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@ The **Llama 8B-Instruct model** is built on a **Transformer architecture** with 
 By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**. This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
 
 <p align="center">
-  <img src="/Image.png" width="400"/>
+  <img src="/Image.png" width="700" />
 </p>
 
 
