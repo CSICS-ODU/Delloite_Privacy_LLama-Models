@@ -21,7 +21,7 @@ You can read more about the **Privacy Inference attacks** with a link to this pa
 The **Defender Prompt** is embedded into the model's processing pipeline during input processing in the last half of the model's layers. This ensures that the **System Prompt's** context is reinforced, especially in later stages where the model might otherwise lose its influence.
 
 <p align="center">
-  <img src="/Transformer Archetecture.png" width="500" height="600">
+  <img src="/Transformer Archetecture.png" width="700" height="600">
 </p>
 
 <p align="center">
