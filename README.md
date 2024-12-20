@@ -31,15 +31,6 @@ The **Defender Prompt** is embedded into the model's processing pipeline during 
 
 The **Llama 8B-Instruct model** is built on a **Transformer architecture** with **32 layers of decoders**. In this enhanced version, we are embedding the **Defender Prompt** into the model's processing pipeline, specifically in the **last 14 layers** (from layer 19 to layer 32). This **key modification** strengthens the model's **contextual understanding** and ensures that the **system’s prompt** remains influential throughout the entire inference process.
 
-
-
-# **Privacy-Aligned Results:**
-By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**. This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
-
-<p align="center">
-  <img src="/Image.png" width="700" />
-</p>
-
 ```python
 @torch.inference_mode()
 def forward(self, tokens: torch.Tensor, start_pos: int, systemPrompttokens: torch.Tensor, mitigateAdversalPrompt: bool):
@@ -95,11 +86,26 @@ def forward(self, tokens: torch.Tensor, start_pos: int, systemPrompttokens: torc
     output = self.output(h).float()
     
     return output
+```
 
 
 The above code demonstrates how we can **append SystemPromptEmbeddings** to the output of every decoder layer to make the model **stronger** and more aligned with privacy-preserving objectives. 
 
 The **`counter` value** being compared and the **intensity of the `for` loop** (i.e., the number of iterations within the loop) act as **hyperparameters** that can be tuned to achieve optimal performance based on specific use cases. Fine-tuning these parameters allows for better control over how much influence the **SystemPromptEmbeddings** have on the model's final outputs.
+
+
+
+
+# **Privacy-Aligned Results:**
+By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**. This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
+
+<p align="center">
+  <img src="/Image.png" width="700" />
+</p>
+
+<p align="center">
+   The above graph illustrates three different models with the Defender mechanism turned on and turned off. It is evident that the model does not leak private information when the stress in the System Prompt is increased at every layer.
+</p>
 
 
 # Llama Models
