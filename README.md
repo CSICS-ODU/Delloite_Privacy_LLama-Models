@@ -100,7 +100,7 @@ The **`counter` value** being compared and the **intensity of the `for` loop** (
 By incorporating the **Defender Prompt** embedding into the latter layers, the model prioritizes **privacy-preserving mechanisms** while maintaining **contextual relevance** and **accuracy**. This modification ensures outputs that are more aligned with **privacy objectives**, significantly improving the model's **robustness** against **adversarial prompts**.
 
 <p align="center">
-  <img src="/Image.png" width="700" />
+  <img src="/Model Peromance graph.png" width="700" />
 </p>
 
 <p align="center">
