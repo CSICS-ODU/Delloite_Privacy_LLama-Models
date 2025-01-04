@@ -1,9 +1,8 @@
 <p align="center">
   <img src="/Llama_Repo.jpeg" width="400"/>
 </p>
-## Contributors
 
-- [Manohar Vellala](https://github.com/ManoharVellala) - Core developer and contributor to privacy-preserving techniques in LLMs.
+
 
 # Privacy-preserving techniques in Large Language Models (LLMs)
 
@@ -110,6 +109,11 @@ By incorporating the **Defender Prompt** embedding into the latter layers, the m
    The above graph illustrates three different models with the Defender mechanism turned on and turned off. It is evident that the model does not leak private information when the stress in the System Prompt is increased at every layer.
 </p>
 
+
+# Privacy-preserving techniques in Large Language Models (LLMs)
+
+- [Manohar Vellala](https://github.com/ManoharVellala)
+- 
 
 # Llama Models
 
