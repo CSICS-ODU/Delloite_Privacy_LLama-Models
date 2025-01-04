@@ -1,6 +1,9 @@
 <p align="center">
   <img src="/Llama_Repo.jpeg" width="400"/>
 </p>
+# Privacy-preserving techniques in Large Language Models (LLMs)
+
+- [Manohar Vellala](https://github.com/ManoharVellala)
 
 
 
@@ -110,10 +113,7 @@ By incorporating the **Defender Prompt** embedding into the latter layers, the m
 </p>
 
 
-# Privacy-preserving techniques in Large Language Models (LLMs)
 
-- [Manohar Vellala](https://github.com/ManoharVellala)
-- 
 
 # Llama Models
 
