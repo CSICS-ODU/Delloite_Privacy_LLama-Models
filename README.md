@@ -1,13 +1,13 @@
 <p align="center">
   <img src="/Llama_Repo.jpeg" width="400"/>
 </p>
-# Privacy-preserving techniques in Large Language Models (LLMs)
 
+# Contributors
 - [Manohar Vellala](https://github.com/ManoharVellala)
+- Soumya Banerjee
 
 
 
-# Privacy-preserving techniques in Large Language Models (LLMs)
 
 This repository showcases an approach to mitigate **adversarial prompts** in **Llama models**. The **System Prompt** includes specialized **Defender Prompts** designed to enhance **privacy** and **security** during inference to achieve this. 
 
