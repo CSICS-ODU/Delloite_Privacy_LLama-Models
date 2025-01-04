@@ -7,7 +7,7 @@
 - Soumya Banerjee
 
 
-
+# Privacy-preserving techniques in Large Language Models (LLMs)
 
 This repository showcases an approach to mitigate **adversarial prompts** in **Llama models**. The **System Prompt** includes specialized **Defender Prompts** designed to enhance **privacy** and **security** during inference to achieve this. 
 
