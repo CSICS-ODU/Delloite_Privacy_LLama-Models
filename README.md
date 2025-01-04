@@ -1,6 +1,9 @@
 <p align="center">
   <img src="/Llama_Repo.jpeg" width="400"/>
 </p>
+## Contributors
+
+- [Manohar Vellala](https://github.com/ManoharVellala) - Core developer and contributor to privacy-preserving techniques in LLMs.
 
 # Privacy-preserving techniques in Large Language Models (LLMs)
 
