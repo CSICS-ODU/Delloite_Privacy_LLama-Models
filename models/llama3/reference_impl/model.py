@@ -7,10 +7,11 @@
 
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed in accordance with the terms of the Llama 3 Community License Agreement.
-
+import uuid 
 import math
 from typing import Optional, Tuple
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 import fairscale.nn.model_parallel.initialize as fs_init
 import torch
 import torch.nn.functional as F
@@ -113,8 +114,9 @@ def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
 
 
 class Attention(nn.Module):
-    def __init__(self, args: ModelArgs):
+    def __init__(self, layer_id:int, args: ModelArgs):
         super().__init__()
+        self.layer_id=layer_id
         self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
         model_parallel_size = fs_init.get_model_parallel_world_size()
         self.n_local_heads = args.n_heads // model_parallel_size
@@ -174,6 +176,7 @@ class Attention(nn.Module):
         start_pos: int,
         freqs_cis: torch.Tensor,
         mask: Optional[torch.Tensor],
+        layer_id:int
     ):
         bsz, seqlen, _ = x.shape
         xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
@@ -207,13 +210,131 @@ class Attention(nn.Module):
             1, 2
         )  # (bs, n_local_heads, cache_len + seqlen, head_dim)
         scores = torch.matmul(xq, keys.transpose(2, 3)) / math.sqrt(self.head_dim)
+
+        #  ################## using Sin function
+        start = 2
+        num_amplify = 100  # Number of scores to amplify
+        amplification_value = 10  # Amplification factor
+
+        if seqlen > 1 and layer_id > 25:
+            # Split into start, amplification part, and rest
+            start_part = scores[:, :, :, :start]  # Shape: (batch, n_heads, seq_len, start)
+            middle_part = scores[:, :, :, start:num_amplify]  # Shape: (batch, n_heads, seq_len, num_amplify-start)
+            rest_part = scores[:, :, :, num_amplify:]  # Shape: (batch, n_heads, seq_len, total_len-num_amplify)
+
+            # Generate a sine wave that oscillates between 0 and 1
+            seq_length = middle_part.size(-1)
+            sine_wave = torch.sin(torch.linspace(0, math.pi, seq_length))  # Generate sine values from 0 to pi
+            sine_wave = (sine_wave + 1) / 2  # Scale and shift to [0, 1]
+
+            # Reshape the sine wave to match the dimensions of middle_part
+            sine_wave = sine_wave.view(1, 1, 1, -1).expand_as(middle_part)
+
+            # Apply the sine wave to the middle part
+            middle_part = (sine_wave * amplification_value)
+
+            # Concatenate the amplified parts back
+            scores = torch.cat((start_part, middle_part, rest_part), dim=-1)
+
+        # #  ##################
+        # start = 28
+        # num_amplify = 55  # Number of scores to amplify
+        # amplification_value = 20  # Amplification factor
+
+
+        # if seqlen > 1 and layer_id >25 :
+          
+        #     # Split into start, amplification part, and rest
+        #     start_part = scores[:, :, :, :start]  # Shape: (batch, n_heads, seq_len, start)
+        #     middle_part= scores[:, :, :, start:num_amplify]  # Shape: (batch, n_heads, seq_len, num_amplify-start)
+        #     rest_part = scores[:, :, :, num_amplify:] 
+        #     amplification_tensor = torch.full_like(middle_part, amplification_value) # Shape: (batch, n_heads, seq_len, total_len-num_amplify)
+
+        #     middle_part=amplification_tensor
+ 
+
+        #     # Concatenate the amplified parts back
+        #     scores = torch.cat((start_part, middle_part, rest_part), dim=-1)
+       
+        # print(scores.shape)
+
+
         if mask is not None:
             scores = scores + mask  # (bs, n_local_heads, seqlen, cache_len + seqlen)
         scores = F.softmax(scores.float(), dim=-1).type_as(xq)
+        #  ################## using Sin function
+        # start = 28
+        # num_amplify = 55  # Number of scores to amplify
+        # amplification_value = 1  # Amplification factor
+
+        # if seqlen > 1 and layer_id > 25:
+        #     # Split into start, amplification part, and rest
+        #     start_part = scores[:, :, :, :start]  # Shape: (batch, n_heads, seq_len, start)
+        #     middle_part = scores[:, :, :, start:num_amplify]  # Shape: (batch, n_heads, seq_len, num_amplify-start)
+        #     rest_part = scores[:, :, :, num_amplify:]  # Shape: (batch, n_heads, seq_len, total_len-num_amplify)
+
+        #     # Generate a sine wave that oscillates between 0 and 1
+        #     seq_length = middle_part.size(-1)
+        #     sine_wave = torch.sin(torch.linspace(0, math.pi, seq_length))  # Generate sine values from 0 to pi
+        #     sine_wave = (sine_wave + 1) / 2  # Scale and shift to [0, 1]
+
+        #     # Reshape the sine wave to match the dimensions of middle_part
+        #     sine_wave = sine_wave.view(1, 1, 1, -1).expand_as(middle_part)
+
+        #     # Apply the sine wave to the middle part
+        #     middle_part = (sine_wave * amplification_value)*0.5
+
+        #     # Concatenate the amplified parts back
+        #     scores = torch.cat((start_part, middle_part, rest_part), dim=-1)
+
+        #  ##################
+        # start = 28
+        # num_amplify = 55  # Number of scores to amplify
+        # amplification_value = 2.5  # Amplification factor
+
+
+        # if seqlen > 1 and layer_id >25 :
+          
+        #     # Split into start, amplification part, and rest
+        #     start_part = scores[:, :, :, :start]  # Shape: (batch, n_heads, seq_len, start)
+        #     middle_part= scores[:, :, :, start:num_amplify]  # Shape: (batch, n_heads, seq_len, num_amplify-start)
+        #     rest_part = scores[:, :, :, num_amplify:] 
+        #     amplification_tensor = torch.full_like(middle_part, amplification_value) # Shape: (batch, n_heads, seq_len, total_len-num_amplify)
+
+        #     middle_part=amplification_tensor
+ 
+
+        #     # Concatenate the amplified parts back
+        #     scores = torch.cat((start_part, middle_part, rest_part), dim=-1)
+
+        if seqlen>1 and layer_id == 27:  # Only visualize for the first layer for simplicity
+            plt.figure(figsize=(20, 20))
+            
+            # Extract the middle part of the scores (keys from 2 to 100)
+            middle_part = scores[:, :, :, 1:300]  # Shape: (batch, n_heads, seq_len, 98)
+            
+            # Convert scores to float32 and extract the first head's scores
+            scores_float32 = middle_part[0, 0].float().cpu().detach().numpy()
+            
+            # Focus on queries 0 to 100
+            scores_sliced = scores_float32[1:300, :]  # Slice the first 100 queries
+            
+            # Plot the heatmap for the sliced scores
+            sns.heatmap(scores_sliced, cmap='viridis',robust=True)  # Plot the sliced scores
+            plt.title(f"Attention Scores (Layer {layer_id}, Head 0) - Queries 0-100, Keys 2-100")
+            plt.xlabel("Keys (2-100)")
+            plt.ylabel("Queries (0-100)")
+            
+            # Generate a unique filename
+            filename = f"Sin wave attention Amp value 1.png"
+            plt.savefig(filename)  # Save the plot to a file
+            plt.close()  # Close the plot to free up memory
+            print(f"Saved plot to {filename}")# Close the plot to free up memory
+
         output = torch.matmul(scores, values)  # (bs, n_local_heads, seqlen, head_dim)
         output = output.transpose(1, 2).contiguous().view(bsz, seqlen, -1)
-        return self.wo(output)
 
+        return self.wo(output)
 
 class FeedForward(nn.Module):
     def __init__(
@@ -250,7 +371,7 @@ class TransformerBlock(nn.Module):
         self.n_heads = args.n_heads
         self.dim = args.dim
         self.head_dim = args.dim // args.n_heads
-        self.attention = Attention(args)
+        self.attention = Attention(layer_id,args)
         self.feed_forward = FeedForward(
             dim=args.dim,
             hidden_dim=4 * args.dim,
@@ -267,8 +388,9 @@ class TransformerBlock(nn.Module):
         start_pos: int,
         freqs_cis: torch.Tensor,
         mask: Optional[torch.Tensor],
+        layer_id:int
     ):
-        h = x + self.attention(self.attention_norm(x), start_pos, freqs_cis, mask)
+        h = x + self.attention(self.attention_norm(x), start_pos, freqs_cis, mask,layer_id)
         out = h + self.feed_forward(self.ffn_norm(h))
         return out
 
@@ -285,6 +407,7 @@ class Transformer(nn.Module):
         )
 
         self.layers = torch.nn.ModuleList()
+        print(params.n_layers)
         for layer_id in range(params.n_layers):
             self.layers.append(TransformerBlock(layer_id, params))
 
@@ -327,10 +450,11 @@ class Transformer(nn.Module):
             mask = torch.hstack(
                 [torch.zeros((seqlen, start_pos), device=tokens.device), mask]
             ).type_as(h)
-
+        
+        
         counter=0
         # Loop through layers and conditionally add system prompt embeddings
-        for layer in self.layers:
+        for layer_id,layer in enumerate(self.layers):
             # Add system prompt embeddings only if h.shape matches the condition
             
             if seqlen>1 and mitigateAdversalPrompt:
@@ -349,19 +473,16 @@ class Transformer(nn.Module):
                     else:
                         # Slice system prompt embeddings
                         systemPromptEmbeddings = systemPromptEmbeddings[:, :h.shape[1], :]
-                if counter>18:
-                  for i in range(30):
+                # if counter>14:
+                #   for i in range(30):
 
-                    h = h + systemPromptEmbeddings
-                counter+=1
+                #     h = h + systemPromptEmbeddings
+                # counter+=1
 
-            h = layer(h, start_pos, freqs_cis, mask)
+            h = layer(h, start_pos, freqs_cis, mask,layer_id)
            
         # Apply normalization and output layer
         h = self.norm(h)
         output = self.output(h).float()
         
         return output
-
-
-    
